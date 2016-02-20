@@ -8,5 +8,6 @@
     <orderEntry type="library" name="GOPATH &lt;SimpleHttpServer&gt;" level="project" />
     <orderEntry type="library" name="GOPATH &lt;tileserver&gt;" level="project" />
     <orderEntry type="library" name="GOPATH &lt;go-tileserver&gt;" level="project" />
+    <orderEntry type="library" name="leaflet" level="application" />
   </component>
 </module>
