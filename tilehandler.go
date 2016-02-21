@@ -31,8 +31,6 @@ func RegisterTileDatabase(path string, name ...string) (err error) {
 
 func GetTile(w http.ResponseWriter, r *http.Request) {
 	pathComponents, err := prepareRequest(r.URL)
-
-	// TODO: Cleanup of error processing
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -59,10 +57,27 @@ func GetTile(w http.ResponseWriter, r *http.Request) {
 
 	var tile_data *sql.RawBytes
 
-	// TODO: Use .Query to properly handle "tile not found"
-	err = db.QueryRow("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_row = ? AND tile_column = ?", z, y, x).Scan(&tile_data)
+	rows, err := db.Query("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_row = ? AND tile_column = ?", z, y, x);
 	if err != nil {
 		http.Error(w, "Database error (2)", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	gotRow := rows.Next()
+	err = rows.Err()
+	if !gotRow {
+		if err != nil {
+			http.Error(w, "Database error (3)", http.StatusInternalServerError)
+		} else {
+			http.Error(w, "Tile not found", http.StatusNotFound)
+		}
+		return
+	}
+	
+	err = rows.Scan(&tile_data)
+	if err != nil {
+		http.Error(w, "Error retrieving tile", http.StatusInternalServerError)
 		return
 	}
 
