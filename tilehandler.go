@@ -1,4 +1,5 @@
 package main
+
 import (
 	"database/sql"
 	"net/http"
@@ -74,7 +75,7 @@ func GetTile(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	
+
 	err = rows.Scan(&tile_data)
 	if err != nil {
 		http.Error(w, "Error retrieving tile", http.StatusInternalServerError)
